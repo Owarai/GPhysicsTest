@@ -26,6 +26,12 @@ public:
 	YVec operator+(const YVec& vec2);
 	YVec operator*(double v);
 	YVec operator/(double v);
+
+	YVec& operator-=(const YVec& vec2);
+	YVec& operator+=(const YVec& vec2);
+	YVec& operator*=(double v);
+	YVec& operator/=(double v);
+
 };
 
 double length(const YVec& vec);

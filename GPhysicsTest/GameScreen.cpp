@@ -47,6 +47,30 @@ YVec YVec::operator/(double v) {
 	return result;
 }
 
+YVec& YVec::operator-=(const YVec& vec2) {
+	this->x -= vec2.x;
+	this->y -= vec2.y;
+	return *this;
+}
+
+YVec& YVec::operator+=(const YVec& vec2) {
+	this->x += vec2.x;
+	this->y += vec2.y;
+	return *this;
+}
+
+YVec& YVec::operator*=(double v) {
+	this->x *= v;
+	this->y *= v;
+	return *this;
+}
+
+YVec& YVec::operator/=(double v) {
+	this->x /= v;
+	this->y /= v;
+	return *this;
+}
+
 Ball::Ball()
 {
 	this->pos = YVec(rand() % 400, rand() % 300);
@@ -58,8 +82,7 @@ Ball::Ball()
 
 void Ball::move()
 {
-	this->pos.x += this->vel.x;
-	this->pos.y += this->vel.y;
+	pos += vel;
 }
 
 double length(const YVec& vec) {
@@ -74,7 +97,7 @@ GameScreen::GameScreen(QWidget *parent)
 	: QWidget(parent)
 {
 	ui.setupUi(this);
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 4; i++) {
 		balls.push_back(Ball());
 	}
 
@@ -141,7 +164,6 @@ void GameScreen::paintEvent(QPaintEvent * event) {
 
 void GameScreen::mousePressEvent(QMouseEvent * event) {
 	balls.push_back(Ball());
-	balls.back().rad = rand() % 20 + 5;
 	balls.back().pos.x = event->pos().x();
 	balls.back().pos.y = event->pos().y();
 	balls.back().vel = YVec(0.0, 0.0);
@@ -151,6 +173,16 @@ void GameScreen::mousePressEvent(QMouseEvent * event) {
 void GameScreen::keyPressEvent(QKeyEvent* event) {
 	if (event->key() == Qt::Key_B) {
 		int junk =0;
+	}
+	else if (event->key() == Qt::Key_C) {
+		for (int i = 0; i < balls.size(); i++) {
+			balls[i].vel /= 2;
+		}
+	}
+	else if (event->key() == Qt::Key_R) {
+		for (int i = 0; i < balls.size(); i++) {
+			balls[i].vel = YVec (0.0, 0.0) - balls[i].vel;
+		}
 	}
 }
 
@@ -234,20 +266,20 @@ void GameScreen::collision(Ball& ball1, Ball& ball2) {
 
 	// compute the unit vector of perpendicular direction to the collision face
 	YVec v2 = (ball2.pos - ball1.pos);
-	v2 = v2 / length(v2);
+	v2 /= length(v2);
 
 	ball1.pos = midpt - v2 * ball1.rad;
 	
-	v2 = v2 * dot(ball1.vel, v2);
+	v2 *= dot(ball1.vel, v2);
 	YVec v3 = ball1.vel - v2;
 
 	// 
 	YVec v4 = (ball1.pos - ball2.pos);
-	v4 = v4 / length(v4);
+	v4 /= length(v4);
 
 	ball2.pos = midpt - v4 * ball2.rad;
 
-	v4 = v4 * dot(ball2.vel, v4);
+	v4 *= dot(ball2.vel, v4);
 	YVec v5 = ball2.vel - v4;
 
 	ball1.vel = v4 * pow(ball2.rad, 2) / pow(ball1.rad, 2) + v3;
