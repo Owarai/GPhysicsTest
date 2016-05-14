@@ -51,7 +51,8 @@ Ball::Ball()
 {
 	this->pos = YVec(rand() % 400, rand() % 300);
 	this->vel = YVec((double)(rand() % 10) / 10, (double)(rand() % 10) / 10);
-	this->rad = (rand() % 20) + 1;
+	this->rad = (rand() % 10) + 5;
+	this->color = QColor(rand() % 256, rand() % 256, rand() % 256);
 
 }
 
@@ -73,10 +74,30 @@ GameScreen::GameScreen(QWidget *parent)
 	: QWidget(parent)
 {
 	ui.setupUi(this);
-
 	for (int i = 0; i < 10; i++) {
 		balls.push_back(Ball());
 	}
+
+	/*
+	for (int i = 0; i < 3; i++) {
+	balls.push_back(Ball());
+	
+	balls[i].rad = 10;
+	balls[i].pos.y = height();
+	balls[i].vel.y = 0;
+	}
+	*/
+	/*
+	balls[1].rad = 20;
+
+	balls[0].pos.x = width() / 4;
+	balls[1].pos.x = width() / 2;
+	balls[2].pos.x = width() * 3/ 4;
+
+	balls[0].vel.x = 1;
+	balls[1].vel.x = 0.01;
+	balls[2].vel.x = -1;
+	*/
 
 	timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
@@ -93,12 +114,44 @@ void GameScreen::paintEvent(QPaintEvent * event) {
 	QPainter painter(this);
 	painter.fillRect(0, 0, width(), height(), QColor(255, 255, 255));
 	for (int i = 0; i < balls.size(); i++) {
+		painter.setPen(balls[i].color);
+		painter.setBrush(QBrush(balls[i].color));
 		painter.drawEllipse(QPointF(balls[i].pos.x, balls[i].pos.y), balls[i].rad, balls[i].rad);
 	}
+
+	float beforeMomen = momentum;
+
+
+	momentum = 0;
+	for (int i = 0; i < balls.size(); i++) {
+		momentum += pow(balls[i].rad, 2) * abs(length(balls[i].vel));
+	}
+
+	if (momentum > beforeMomen) {
+		painter.setPen(Qt::red);
+	}
+	else {
+		painter.setPen(Qt::black);
+	}
+	char str[256];
+	sprintf(str, "%lf", momentum);
+	painter.drawText(10, 10, str);
+
+}
+
+void GameScreen::mousePressEvent(QMouseEvent * event) {
+	balls.push_back(Ball());
+	balls.back().rad = rand() % 20 + 5;
+	balls.back().pos.x = event->pos().x();
+	balls.back().pos.y = event->pos().y();
+	balls.back().vel = YVec(0.0, 0.0);
+
 }
 
 void GameScreen::keyPressEvent(QKeyEvent* event) {
-
+	if (event->key() == Qt::Key_B) {
+		int junk =0;
+	}
 }
 
 void GameScreen::keyReleaseEvent(QKeyEvent* event) {
@@ -119,6 +172,10 @@ void GameScreen::onTimer() {
 			balls[i].pos.y = height() - balls[i].rad;
 			balls[i].vel.y = -balls[i].vel.y * 0.9;
 		}
+		else if (balls[i].pos.y < balls[i].rad) {
+			balls[i].pos.y = balls[i].rad;
+			balls[i].vel.y = -balls[i].vel.y;
+		}
 
 		if (balls[i].pos.x < balls[i].rad) {
 			balls[i].pos.x = balls[i].rad;
@@ -128,20 +185,31 @@ void GameScreen::onTimer() {
 			balls[i].pos.x = width() - balls[i].rad;
 			balls[i].vel.x = -balls[i].vel.x;
 		}
-
-		if (balls[i].pos.y > height() - (balls[i].rad + 0.1) && balls[i].vel.y < 0.2) {
-			balls[i].vel.x *= 0.9995;
-		}
-
-		balls[i].vel.y += 0.1f;
 		/*
 		if (abs(balls[i].vel.x) < 0.1) {
 			balls[i].vel.x = 0;
 		}
-		if (abs(balls[i].vel.y) < 0.1) {
-			balls[i].vel.y = 0;
-		}
 		*/
+
+		if (balls[i].pos.y > height() - (balls[i].rad + 0.1) && abs(balls[i].vel.y) < 0.1) {
+
+		//if (abs(balls[i].vel.y) < 0.00001) {
+			balls[i].vel.y = 0;
+
+			//friction
+			balls[i].vel.x *= 0.99;
+			if (abs(balls[i].vel.x) < 0.1) {
+				balls[i].vel.x = 0;
+			}
+		}
+		/*if (balls[i].pos.y > height() - (balls[i].rad + 0.1) && balls[i].vel.y < 0.2) {
+			balls[i].vel.x *= 0.99;
+		}*/
+		else {
+			balls[i].vel.y += 0.1f;
+		}
+
+
 	}
 
 
@@ -162,7 +230,7 @@ bool GameScreen::isCollided(const Ball& ball1, const Ball& ball2) {
 }
 
 void GameScreen::collision(Ball& ball1, Ball& ball2) {
-	YVec midpt = (ball1.pos + ball2.pos) / 2;
+	YVec midpt = (ball1.pos * ball2.rad+ ball2.pos * ball1.rad) / (ball1.rad + ball2.rad);
 
 	// compute the unit vector of perpendicular direction to the collision face
 	YVec v2 = (ball2.pos - ball1.pos);
@@ -182,7 +250,8 @@ void GameScreen::collision(Ball& ball1, Ball& ball2) {
 	v4 = v4 * dot(ball2.vel, v4);
 	YVec v5 = ball2.vel - v4;
 
+	ball1.vel = v4 * pow(ball2.rad, 2) / pow(ball1.rad, 2) + v3;
+	ball2.vel = v2 * pow(ball1.rad, 2) / pow(ball2.rad, 2) + v5;
 
-	ball1.vel = v4 + v3;
-	ball2.vel = v2 + v5;
+
 }

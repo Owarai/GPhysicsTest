@@ -8,6 +8,8 @@
 #include <QTimer>
 #include <time.h>
 #include <vector>
+#include <QKeyEvent>
+#include <QMouseEvent>
 
 class YVec
 {
@@ -32,6 +34,7 @@ double dot(const YVec& vec1, const YVec& vec2);
 class Ball
 {
 public:
+	QColor color;
 	YVec pos;
 	YVec vel;
 	double rad;
@@ -62,11 +65,13 @@ public slots:
 
 protected:
 	void paintEvent(QPaintEvent * event);
+	void mousePressEvent(QMouseEvent * event);
 
 private:
 	Ui::GameScreen ui;
 
 	std::vector<Ball> balls;
+	double momentum;
 
 	QTimer* timer;
 };
