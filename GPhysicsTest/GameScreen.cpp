@@ -172,7 +172,9 @@ void GameScreen::mousePressEvent(QMouseEvent * event) {
 
 void GameScreen::keyPressEvent(QKeyEvent* event) {
 	if (event->key() == Qt::Key_B) {
-		int junk =0;
+		for (int i = 0; i < balls.size(); i++) {
+			balls[i].vel.y -= 5;
+		}
 	}
 	else if (event->key() == Qt::Key_C) {
 		for (int i = 0; i < balls.size(); i++) {
