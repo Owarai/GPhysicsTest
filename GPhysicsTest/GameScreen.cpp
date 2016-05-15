@@ -140,6 +140,7 @@ void GameScreen::paintEvent(QPaintEvent * event) {
 		painter.setPen(balls[i].color);
 		painter.setBrush(QBrush(balls[i].color));
 		painter.drawEllipse(QPointF(balls[i].pos.x, balls[i].pos.y), balls[i].rad, balls[i].rad);
+		painter.drawEllipse(QPointF(balls[i].pos.x, balls[i].pos.y), balls[i].rad, balls[i].rad);
 	}
 
 	float beforeMomen = momentum;
@@ -184,6 +185,16 @@ void GameScreen::keyPressEvent(QKeyEvent* event) {
 	else if (event->key() == Qt::Key_R) {
 		for (int i = 0; i < balls.size(); i++) {
 			balls[i].vel = YVec (0.0, 0.0) - balls[i].vel;
+		}
+	}
+	else if (event->key() == Qt::Key_D) {
+		for (int i = 0; i < balls.size(); i++) {
+			balls[i].rad *= 0.5;
+		}
+	}
+	else if (event->key() == Qt::Key_E) {
+		for (int i = 0; i < balls.size(); i++) {
+			balls[i].rad *= 2;
 		}
 	}
 }
