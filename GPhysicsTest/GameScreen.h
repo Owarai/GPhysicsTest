@@ -58,6 +58,9 @@ class GameScreen : public QWidget
 	Q_OBJECT
 
 public:
+	static enum { GRAVITY_NULL = 0, GRAVITY_DOWN, GRAVITY_UP, GRAVITY_LEFT, GRAVITY_RIGHT };
+
+public:
 	GameScreen(QWidget *parent = 0);
 	~GameScreen();
 
@@ -75,6 +78,8 @@ protected:
 
 private:
 	Ui::GameScreen ui;
+
+	int grav;
 
 	std::vector<Ball> balls;
 	double momentum;

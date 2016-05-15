@@ -122,6 +122,8 @@ GameScreen::GameScreen(QWidget *parent)
 	balls[2].vel.x = -1;
 	*/
 
+	grav = GRAVITY_DOWN;
+
 	timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
 
@@ -197,6 +199,26 @@ void GameScreen::keyPressEvent(QKeyEvent* event) {
 			balls[i].rad *= 2;
 		}
 	}
+	else if (event->key() == Qt::Key_F) {
+		for (int i = 0; i < balls.size(); i++) {
+			balls[i].vel.y = -0.12;
+		}
+	}
+	else if (event->key() == Qt::Key_N) {
+		grav = GRAVITY_NULL;
+	}
+	else if (event->key() == Qt::Key_Down) {
+		grav = GRAVITY_DOWN;
+	}
+	else if (event->key() == Qt::Key_Up) {
+		grav = GRAVITY_UP;
+	}
+	else if (event->key() == Qt::Key_Left) {
+		grav = GRAVITY_LEFT;
+	}
+	else if (event->key() == Qt::Key_Right) {
+		grav = GRAVITY_RIGHT;
+	}
 }
 
 void GameScreen::keyReleaseEvent(QKeyEvent* event) {
@@ -250,8 +272,40 @@ void GameScreen::onTimer() {
 		/*if (balls[i].pos.y > height() - (balls[i].rad + 0.1) && balls[i].vel.y < 0.2) {
 			balls[i].vel.x *= 0.99;
 		}*/
+		/*
 		else {
+			if (grav = GRAVITY_DOWN) {
+				balls[i].vel.y += 0.1f;
+			}
+			else if (grav = GRAVITY_UP) {
+				balls[i].vel.y += -0.1f;
+			}
+			else if (grav = GRAVITY_LEFT) {
+				balls[i].vel.x += -0.1f;
+			}
+			else if (grav = GRAVITY_RIGHT) {
+				balls[i].vel.x += 0.1f;
+			}
+			else if (grav = GRAVITY_NULL) {
+				//do nothing;
+			}
+		}
+		*/
+
+		if (grav == GRAVITY_DOWN) {
 			balls[i].vel.y += 0.1f;
+		}
+		else if (grav == GRAVITY_UP) {
+			balls[i].vel.y += -0.1f;
+		}
+		else if (grav == GRAVITY_LEFT) {
+			balls[i].vel.x += -0.1f;
+		}
+		else if (grav == GRAVITY_RIGHT) {
+			balls[i].vel.x += 0.1f;
+		}
+		else if (grav == GRAVITY_NULL) {
+			//do nothing;
 		}
 
 
