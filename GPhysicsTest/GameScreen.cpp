@@ -175,8 +175,42 @@ void GameScreen::mousePressEvent(QMouseEvent * event) {
 
 void GameScreen::keyPressEvent(QKeyEvent* event) {
 	if (event->key() == Qt::Key_B) {
-		for (int i = 0; i < balls.size(); i++) {
-			balls[i].vel.y -= 5;
+		if (grav == GRAVITY_DOWN) {
+			for (int i = 0; i < balls.size(); i++) {
+				balls[i].vel.y -= 5;
+			}
+		}
+		else if (grav == GRAVITY_UP) {
+			for (int i = 0; i < balls.size(); i++) {
+				balls[i].vel.y += 5;
+			}
+		}
+		else if (grav == GRAVITY_LEFT) {
+			for (int i = 0; i < balls.size(); i++) {
+				balls[i].vel.x += 5;
+			}
+		}
+		else if (grav == GRAVITY_RIGHT) {
+			for (int i = 0; i < balls.size(); i++) {
+				balls[i].vel.x -= 5;
+			}
+		}
+		else if (grav == GRAVITY_NULL) {
+			for (int i = 0; i < balls.size(); i++) {
+				int fate = rand() % 4;
+				if (fate == 0) {
+					balls[i].vel.y -= 5;
+				}
+				else if (fate == 1) {
+					balls[i].vel.y += 5;
+				}
+				else if (fate == 2) {
+					balls[i].vel.x += 5;
+				}
+				else if (fate == 3) {
+					balls[i].vel.x -= 5;
+				}
+			}
 		}
 	}
 	else if (event->key() == Qt::Key_C) {
@@ -200,9 +234,33 @@ void GameScreen::keyPressEvent(QKeyEvent* event) {
 		}
 	}
 	else if (event->key() == Qt::Key_F) {
-		for (int i = 0; i < balls.size(); i++) {
-			balls[i].vel.y = -0.12;
+		if (grav == GRAVITY_DOWN) {
+			for (int i = 0; i < balls.size(); i++) {
+				balls[i].vel.y = -0.12;
+			}
 		}
+		else if (grav == GRAVITY_UP) {
+			for (int i = 0; i < balls.size(); i++) {
+				balls[i].vel.y = 0.12;
+			}
+		}
+		else if (grav == GRAVITY_LEFT) {
+			for (int i = 0; i < balls.size(); i++) {
+				balls[i].vel.x = 0.12;
+			}
+		}
+		else if (grav == GRAVITY_RIGHT) {
+			for (int i = 0; i < balls.size(); i++) {
+				balls[i].vel.x = -0.12;
+			}
+		}
+		else if (grav == GRAVITY_NULL) {
+			for (int i = 0; i < balls.size(); i++) {
+				balls[i].vel.x = 0;
+				balls[i].vel.y = 0;
+			}
+		}
+
 	}
 	else if (event->key() == Qt::Key_N) {
 		grav = GRAVITY_NULL;
