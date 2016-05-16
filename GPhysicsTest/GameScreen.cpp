@@ -77,7 +77,7 @@ Ball::Ball()
 	this->vel = YVec((double)(rand() % 10) / 10, (double)(rand() % 10) / 10);
 	this->rad = (rand() % 10) + 5;
 	this->color = QColor(rand() % 256, rand() % 256, rand() % 256);
-
+	this->mass = pow(this->rad, 2);
 }
 
 void Ball::move()
@@ -407,8 +407,9 @@ void GameScreen::collision(Ball& ball1, Ball& ball2) {
 	v4 *= dot(ball2.vel, v4);
 	YVec v5 = ball2.vel - v4;
 
-	ball1.vel = v4 * pow(ball2.rad, 2) / pow(ball1.rad, 2) + v3;
-	ball2.vel = v2 * pow(ball1.rad, 2) / pow(ball2.rad, 2) + v5;
-
+	//ball1.vel = v4 * pow(ball2.rad, 2) / pow(ball1.rad, 2) + v3;
+	//ball2.vel = v2 * pow(ball1.rad, 2) / pow(ball2.rad, 2) + v5;
+	ball1.vel = (v2 * (ball1.mass - ball2.mass) + v4 * ball2.mass * 2.0) / (ball1.mass + ball2.mass) + v3;
+	ball2.vel = (v4 * (ball2.mass - ball1.mass) + v2 * ball1.mass * 2.0) / (ball1.mass + ball2.mass) + v5;
 
 }

@@ -44,6 +44,7 @@ public:
 	YVec pos;
 	YVec vel;
 	double rad;
+	double mass;
 
 public:
 	Ball();
