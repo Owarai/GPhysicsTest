@@ -81,7 +81,14 @@ protected:
 private:
 	Ui::GameScreen ui;
 
+	bool isFric;
+
 	int grav;
+	bool top;
+	bool bom;
+	bool lef;
+	bool rit;
+
 
 	std::vector<Ball> balls;
 	double momentum;

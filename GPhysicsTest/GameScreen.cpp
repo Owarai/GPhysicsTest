@@ -97,7 +97,7 @@ GameScreen::GameScreen(QWidget *parent)
 	: QWidget(parent)
 {
 	ui.setupUi(this);
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 0; i++) {
 		balls.push_back(Ball());
 	}
 
@@ -123,6 +123,13 @@ GameScreen::GameScreen(QWidget *parent)
 	*/
 
 	grav = GRAVITY_DOWN;
+
+	isFric = true;
+
+	top = true;
+	bom = true;
+	lef = true;
+	rit = true;
 
 	timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(onTimer()));
@@ -290,6 +297,21 @@ void GameScreen::keyPressEvent(QKeyEvent* event) {
 	else if (event->key() == Qt::Key_Right) {
 		grav = GRAVITY_RIGHT;
 	}
+	else if (event->key() == Qt::Key_I) {
+		top = !top;
+	}
+	else if (event->key() == Qt::Key_K) {
+		bom = !bom;
+	}
+	else if (event->key() == Qt::Key_J) {
+		lef = !lef;
+	}
+	else if (event->key() == Qt::Key_L) {
+		rit = !rit;
+	}
+	else if (event->key() == Qt::Key_Y) {
+		isFric = !isFric;
+	}
 }
 
 void GameScreen::keyReleaseEvent(QKeyEvent* event) {
@@ -306,40 +328,86 @@ void GameScreen::onTimer() {
 			}
 		}
 
-		if (balls[i].pos.y > height() - balls[i].rad) {
+
+		if (balls[i].pos.y > height() - balls[i].rad && bom == true) {
 			balls[i].pos.y = height() - balls[i].rad;
 			balls[i].vel.y = -balls[i].vel.y * 0.8;
 		}
-		else if (balls[i].pos.y < balls[i].rad) {
+		else if (balls[i].pos.y < balls[i].rad && top == true) {
 			balls[i].pos.y = balls[i].rad;
 			balls[i].vel.y = -balls[i].vel.y;
 		}
 
-		if (balls[i].pos.x < balls[i].rad) {
+		if (balls[i].pos.x < balls[i].rad && lef == true) {
 			balls[i].pos.x = balls[i].rad;
 			balls[i].vel.x = -balls[i].vel.x;
 		}
-		else if (balls[i].pos.x > width() - balls[i].rad) {
+		else if (balls[i].pos.x > width() - balls[i].rad && rit == true) {
 			balls[i].pos.x = width() - balls[i].rad;
 			balls[i].vel.x = -balls[i].vel.x;
 		}
 		/*
 		if (abs(balls[i].vel.x) < 0.1) {
-			balls[i].vel.x = 0;
+		balls[i].vel.x = 0;
 		}
 		*/
 
-		if (balls[i].pos.y > height() - (balls[i].rad + 0.1) && abs(balls[i].vel.y) < 0.1) {
+		//gravity & friction
+		if (isFric == true) {
+			if (grav == GRAVITY_DOWN) {
+				if (balls[i].pos.y > height() - (balls[i].rad + 0.1) && abs(balls[i].vel.y) < 0.1) {
 
-		//if (abs(balls[i].vel.y) < 0.00001) {
-			balls[i].vel.y = 0;
+					//if (abs(balls[i].vel.y) < 0.00001) {
+					balls[i].vel.y = 0;
 
-			//friction
-			balls[i].vel.x *= 0.99;
-			if (abs(balls[i].vel.x) < 0.1) {
-				balls[i].vel.x = 0;
+					//friction
+					balls[i].vel.x *= 0.99;
+					if (abs(balls[i].vel.x) < 0.1) {
+						balls[i].vel.x = 0;
+					}
+				}
+			}
+			else if (grav == GRAVITY_UP) {
+				if (balls[i].pos.y < (balls[i].rad + 0.1) && abs(balls[i].vel.y) < 0.1) {
+
+					//if (abs(balls[i].vel.y) < 0.00001) {
+					balls[i].vel.y = 0;
+
+					//friction
+					balls[i].vel.x *= 0.99;
+					if (abs(balls[i].vel.x) < 0.1) {
+						balls[i].vel.x = 0;
+					}
+				}
+			}
+			else if (grav == GRAVITY_LEFT) {
+				if (balls[i].pos.x < (balls[i].rad + 0.1) && abs(balls[i].vel.x) < 0.1) {
+
+					//if (abs(balls[i].vel.y) < 0.00001) {
+					balls[i].vel.x = 0;
+
+					//friction
+					balls[i].vel.y *= 0.99;
+					if (abs(balls[i].vel.y) < 0.1) {
+						balls[i].vel.y = 0;
+					}
+				}
+			}
+			else if (grav == GRAVITY_RIGHT) {
+				if (balls[i].pos.x > width() - (balls[i].rad + 0.1) && abs(balls[i].vel.x) < 0.1) {
+
+					//if (abs(balls[i].vel.y) < 0.00001) {
+					balls[i].vel.x = 0;
+
+					//friction
+					balls[i].vel.y *= 0.99;
+					if (abs(balls[i].vel.y) < 0.1) {
+						balls[i].vel.y = 0;
+					}
+				}
 			}
 		}
+
 		/*if (balls[i].pos.y > height() - (balls[i].rad + 0.1) && balls[i].vel.y < 0.2) {
 			balls[i].vel.x *= 0.99;
 		}*/
