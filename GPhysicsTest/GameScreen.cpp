@@ -166,11 +166,24 @@ void GameScreen::paintEvent(QPaintEvent * event) {
 }
 
 void GameScreen::mousePressEvent(QMouseEvent * event) {
+	clickedPos = event->pos();
+	/*
 	balls.push_back(Ball());
 	balls.back().pos.x = event->pos().x();
 	balls.back().pos.y = event->pos().y();
 	balls.back().vel = YVec(0.0, 0.0);
+	*/
+}
 
+void GameScreen::mouseReleaseEvent(QMouseEvent * event) {
+	YVec vel = YVec(event->pos().x() - clickedPos.x(), event->pos().y() - clickedPos.y());
+	vel /= 20.0;
+
+	balls.push_back(Ball());
+	balls.back().pos.x = event->pos().x();
+	balls.back().pos.y = event->pos().y();
+	//balls.back().vel = YVec(0.0, 0.0);
+	balls.back().vel = vel;
 }
 
 void GameScreen::keyPressEvent(QKeyEvent* event) {
@@ -295,7 +308,7 @@ void GameScreen::onTimer() {
 
 		if (balls[i].pos.y > height() - balls[i].rad) {
 			balls[i].pos.y = height() - balls[i].rad;
-			balls[i].vel.y = -balls[i].vel.y * 0.9;
+			balls[i].vel.y = -balls[i].vel.y * 0.8;
 		}
 		else if (balls[i].pos.y < balls[i].rad) {
 			balls[i].pos.y = balls[i].rad;

@@ -76,6 +76,7 @@ public slots:
 protected:
 	void paintEvent(QPaintEvent * event);
 	void mousePressEvent(QMouseEvent * event);
+	void mouseReleaseEvent(QMouseEvent * event);
 
 private:
 	Ui::GameScreen ui;
@@ -86,6 +87,7 @@ private:
 	double momentum;
 
 	QTimer* timer;
+	QPoint clickedPos;
 };
 
 #endif // GAMESCREEN_H
