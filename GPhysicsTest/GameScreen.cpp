@@ -170,6 +170,16 @@ void GameScreen::paintEvent(QPaintEvent * event) {
 	sprintf(str, "%lf", momentum);
 	painter.drawText(10, 10, str);
 
+	painter.setPen(Qt::black);
+	sprintf(str, "%lf", grav * 1.0);
+	painter.drawText(10, 20, str);
+
+	float var;
+	if (isFric) var = 1.0;
+	else var = 0.0;
+	sprintf(str, "%lf", var);
+	painter.drawText(10, 30, str);
+
 }
 
 void GameScreen::mousePressEvent(QMouseEvent * event) {
@@ -449,7 +459,6 @@ void GameScreen::onTimer() {
 
 
 	}
-
 
 
 	update();
